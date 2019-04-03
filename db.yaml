@@ -1,0 +1,4 @@
+mysql_host: 'localhost'
+mysql_user: 'myuser'
+mysql_password: '1400'
+mysql_db: 'userdb_flask'
