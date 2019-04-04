@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, flash
 from flask_mysqldb import MySQL
 import yaml
+import os
 
 app = Flask(__name__) #instantiate object to run flask application
 
@@ -15,16 +16,16 @@ mysql = MySQL(app) #instantiate object to connect to MySQL
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    if request.method == 'POST':
-        adminDetails = request.form
-        admin_username = adminDetails['username']
-        admin_password = adminDetails['password']
-        cur = mysql.connection.cursor()
-        admin_info = cur.execute("SELECT * FROM admin;")
-        if admin_username == 'name' and admin_password=='password':
-            return redirect('/users')
-        else:
-            flash('Login failed')
+    #adminDetails = request.form
+    #admin_username = adminDetails['username']
+    #admin_password = adminDetails['password']
+    cur = mysql.connection.cursor()
+    admin_info = cur.execute("SELECT * FROM admin;")
+    if request.form['username'] == 'username' and request.form['password'] =='password':
+        return redirect('/users')
+    else:
+        flash('Login failed')
+        return index()
     return render_template('index.html')
 
 @app.route('/add_user_profile', methods=['GET', 'POST']) #add route to add_user_profile page / add methods
@@ -63,4 +64,5 @@ def users(): #define new_profile page
 
 
 if __name__ == '__main__':
+    app.secret_key = os.urandom(12)
     app.run(debug=True) #debug mode to avoid restarting the server for changes
