@@ -1,7 +1,10 @@
+#!/usr/bin/env python3
+
 from flask import Flask, render_template, request, redirect, flash
 from flask_mysqldb import MySQL
 import yaml
 import os
+
 
 app = Flask(__name__) #instantiate object to run flask application
 
@@ -22,15 +25,18 @@ def index():
         cur = mysql.connection.cursor()
         row = cur.execute("SELECT * FROM admin WHERE username = %s;", [form_username])
         if row > 0:
-            admin_password = cur.execute("SELECT password FROM admin WHERE username = %s;", [form_username])
-            if admin_password == form_password:
+            cur.execute("SELECT password FROM admin WHERE username = %s;", [form_username])
+            admin_password = cur.fetchone()
+            if admin_password[0] == form_password:
                 return redirect('/users')
             else:
                 flash('Invalid Credentials')
-                return index()
+                print('line 35')
+                #return index()
         else:
             flash('Invalid Credentials')
-            return index()
+            print('line 39')
+            #return index()
         cur.close()
     return render_template('index.html')
 
