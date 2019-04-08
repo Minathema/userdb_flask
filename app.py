@@ -16,17 +16,24 @@ mysql = MySQL(app) #instantiate object to connect to MySQL
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    #adminDetails = request.form
-    #admin_username = adminDetails['username']
-    #admin_password = adminDetails['password']
-    cur = mysql.connection.cursor()
-    admin_info = cur.execute("SELECT * FROM admin;")
-    if request.form['username'] == 'username' and request.form['password'] =='password':
-        return redirect('/users')
-    else:
-        flash('Login failed')
-        return index()
+    if request.method == 'POST':
+        form_username = request.form['username']
+        form_password = request.form['password']
+        cur = mysql.connection.cursor()
+        row = cur.execute("SELECT * FROM admin WHERE username = %s;", [form_username])
+        if row > 0:
+            admin_password = cur.execute("SELECT password FROM admin WHERE username = %s;", [form_username])
+            if admin_password == form_password:
+                return redirect('/users')
+            else:
+                flash('Invalid Credentials')
+                return index()
+        else:
+            flash('Invalid Credentials')
+            return index()
+        cur.close()
     return render_template('index.html')
+
 
 @app.route('/add_user_profile', methods=['GET', 'POST']) #add route to add_user_profile page / add methods
 def add_user_profile(): #define index page
@@ -41,8 +48,9 @@ def add_user_profile(): #define index page
         cur.execute("INSERT INTO users(user_name, mobile_number, email, home_address) VALUES(%s, %s, %s, %s)", (user_name, mobile_number, email, home_address)) #insert new inputs to database
         mysql.connection.commit() #commit changes to database
         cur.close()
-        return redirect('/new_profile') #redirect to users page
+        return redirect('/new_profile') #redirect to new_profile page
     return render_template('add_user_profile.html') #render a template to display the form
+
 
 @app.route('/new_profile') #add route to new_profile page
 def new_profile(): #define new_profile page
@@ -50,17 +58,19 @@ def new_profile(): #define new_profile page
     resultValue = cur.execute("SELECT * FROM users order by id desc limit 1;") #returns latest entry
     if resultValue > 0: #check if there are rows (=content) i.e. not empty table
         userDetails = cur.fetchall() #returns all rows (in this case the only one that we selected3)
-        return render_template('new_profile.html', userDetails=userDetails) #render a template to display new user details
+    cur.close()
+    return render_template('new_profile.html', userDetails=userDetails) #render a template to display new user details
 
-'''
-@app.route('/new_profile') #add route to new_profile page
+
+@app.route('/users') #add route to new_profile page
 def users(): #define new_profile page
     cur = mysql.connection.cursor()
-    resultValue = cur.execute("SELECT * FROM users;") #returns number of rows in table
+    resultValue = cur.execute("SELECT * FROM users;")
     if resultValue > 0: #check if there are rows (=content) i.e. not empty table
         userDetails = cur.fetchall() #returns all rows
-        return render_template('new_profile.html', userDetails=userDetails) #render a template to display new user details
-'''
+    cur.close()
+    return render_template('users.html', userDetails=userDetails) #render a template to display all user details
+
 
 
 if __name__ == '__main__':
