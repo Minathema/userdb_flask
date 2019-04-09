@@ -1,9 +1,14 @@
-<form action="/" method="POST">
-  Username:<br>
-  <input type="text" name="username" required/>
-  <br>
-  Password:<br>
-  <input type="text" name="password" required/>
-  <br><br>
-  <input type="submit" value="Login as Administrator">
-</form>
+<center>
+{% extends "messages.html" %}
+{% block body %}
+  <form action="/" method="POST">
+    Username:<br>
+    <input type="text" name="username" required/>
+    <br>
+    Password:<br>
+    <input type="text" name="password" required/>
+    <br><br>
+    <input type="submit" value="Login as Administrator">
+  </form>
+{% endblock %}
+</center>

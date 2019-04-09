@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, request, redirect, flash, url_for
 from flask_mysqldb import MySQL
 import yaml
 import os
@@ -19,6 +19,7 @@ mysql = MySQL(app) #instantiate object to connect to MySQL
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    error = None
     if request.method == 'POST':
         form_username = request.form['username']
         form_password = request.form['password']
@@ -28,17 +29,18 @@ def index():
             cur.execute("SELECT password FROM admin WHERE username = %s;", [form_username])
             admin_password = cur.fetchone()
             if admin_password[0] == form_password:
+                flash('You were successfully logged in')
                 return redirect('/users')
             else:
                 flash('Invalid Credentials')
                 print('line 35')
-                #return index()
+                #return redirect(url_for('index'))
         else:
             flash('Invalid Credentials')
             print('line 39')
-            #return index()
+            #return redirect(url_for('index'))
         cur.close()
-    return render_template('index.html')
+    return render_template('index.html', error=error)
 
 
 @app.route('/add_user_profile', methods=['GET', 'POST']) #add route to add_user_profile page / add methods
