@@ -1,14 +1,12 @@
 <center>
-{% extends "messages.html" %}
 {% block body %}
-  <form action="/" method="POST">
-    Username:<br>
-    <input type="text" name="username" required/>
-    <br>
-    Password:<br>
-    <input type="text" name="password" required/>
-    <br><br>
-    <input type="submit" value="Login as Administrator">
+<h2>Welcome!</h2>
+  <form action="/login">
+    <input type="submit" value="Login as Admin"/>
+  </form>
+  <p>or</p>
+  <form action="/add_user_profile">
+    <input type="submit" value="Continue as User"/>
   </form>
 {% endblock %}
 </center>

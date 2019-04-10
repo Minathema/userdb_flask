@@ -1,0 +1,14 @@
+<center>
+{% extends "messages.html" %}
+{% block body %}
+  <form action="/login" method="POST">
+    Username:<br>
+    <input type="text" name="username" required/>
+    <br><br>
+    Password:<br>
+    <input type="text" name="password" required/>
+    <br><br>
+    <input type="submit" value="Login">
+  </form>
+{% endblock %}
+</center>

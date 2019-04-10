@@ -17,8 +17,12 @@ app.config['MYSQL_DB'] = db['mysql_db']
 
 mysql = MySQL(app) #instantiate object to connect to MySQL
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def index():
+    return render_template('index.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
     error = None
     if request.method == 'POST':
         form_username = request.form['username']
@@ -40,11 +44,11 @@ def index():
             print('line 39')
             #return redirect(url_for('index'))
         cur.close()
-    return render_template('index.html', error=error)
+    return render_template('login.html', error=error)
 
 
 @app.route('/add_user_profile', methods=['GET', 'POST']) #add route to add_user_profile page / add methods
-def add_user_profile(): #define index page
+def add_user_profile():
     if request.method == 'POST':
         #Fetch form data
         userDetails = request.form
@@ -70,7 +74,7 @@ def new_profile(): #define new_profile page
     return render_template('new_profile.html', userDetails=userDetails) #render a template to display new user details
 
 
-@app.route('/users') #add route to new_profile page
+@app.route('/users')
 def users(): #define new_profile page
     cur = mysql.connection.cursor()
     resultValue = cur.execute("SELECT * FROM users;")
