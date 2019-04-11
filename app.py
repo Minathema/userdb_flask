@@ -2,6 +2,7 @@
 
 from flask import Flask, render_template, request, redirect, flash, url_for
 from flask_mysqldb import MySQL
+#from tables import Results
 import yaml
 import os
 
@@ -23,10 +24,11 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    error = None
     if request.method == 'POST':
         form_username = request.form['username']
         form_password = request.form['password']
+        print((form_username))
+        print([form_username])
         cur = mysql.connection.cursor()
         row = cur.execute("SELECT * FROM admin WHERE username = %s;", [form_username])
         if row > 0:
@@ -37,27 +39,25 @@ def login():
                 return redirect('/users')
             else:
                 flash('Invalid Credentials')
-                print('line 35')
                 #return redirect(url_for('index'))
         else:
             flash('Invalid Credentials')
-            print('line 39')
             #return redirect(url_for('index'))
         cur.close()
-    return render_template('login.html', error=error)
+    return render_template('login.html')
 
 
 @app.route('/add_user_profile', methods=['GET', 'POST']) #add route to add_user_profile page / add methods
 def add_user_profile():
     if request.method == 'POST':
         #Fetch form data
-        userDetails = request.form
-        user_name = userDetails['user_name']
-        mobile_number = userDetails['mobile_number']
-        email = userDetails['email']
-        home_address = userDetails['home_address']
+        user_name = request.form['user_name']
+        mobile_number = request.form['mobile_number']
+        email = request.form['email']
+        home_address = request.form['home_address']
+        print((user_name))
         cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO users(user_name, mobile_number, email, home_address) VALUES(%s, %s, %s, %s)", (user_name, mobile_number, email, home_address)) #insert new inputs to database
+        cur.execute("INSERT INTO users (user_name, mobile_number, email, home_address) VALUES (%s, %s, %s, %s);", (user_name, mobile_number, email, home_address)) #insert new inputs to database
         mysql.connection.commit() #commit changes to database
         cur.close()
         return redirect('/new_profile') #redirect to new_profile page
@@ -70,8 +70,11 @@ def new_profile(): #define new_profile page
     resultValue = cur.execute("SELECT * FROM users order by id desc limit 1;") #returns latest entry
     if resultValue > 0: #check if there are rows (=content) i.e. not empty table
         userDetails = cur.fetchall() #returns all rows (in this case the only one that we selected3)
+        #table = Results(userDetails)
+		#table.border = True
     cur.close()
-    return render_template('new_profile.html', userDetails=userDetails) #render a template to display new user details
+    #return render_template('new_profile.html', userDetails=userDetails, table=table) #render a template to display new user details
+    return render_template('new_profile.html', userDetails=userDetails)
 
 
 @app.route('/users')
@@ -82,6 +85,43 @@ def users(): #define new_profile page
         userDetails = cur.fetchall() #returns all rows
     cur.close()
     return render_template('users.html', userDetails=userDetails) #render a template to display all user details
+
+
+@app.route('/edit/<int:id>')
+def edit_view(id):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM users where id = %s;", (id))
+    userDetails = cur.fetchone()
+    if userDetails:
+        return render_template('edit.html', userDetails=userDetails)
+    cur.close()
+
+
+@app.route('/update', methods=['POST'])
+def update_user():
+    if request.method == 'POST':
+        userDetails = request.form
+        user_name = userDetails['user_name']
+        mobile_number = userDetails['mobile_number']
+        email = userDetails['email']
+        home_address = userDetails['home_address']
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE users SET user_name = %s, mobile_number = %s, email = %s, home_address = %s WHERE id = %s;", (user_name, mobile_number, email, home_address, id)) #insert new inputs to database
+        mysql.connection.commit() #commit changes to database
+        flash('Profile updated successfully')
+        return redirect('/new_profile')
+    cur.close()
+
+
+@app.route('/delete/<int:id>')
+def delete_user(id):
+    if request.method == 'POST':
+        cur = mysql.connection.cursor()
+        cur.execute("DELETE FROM users where id = %s;", (id))
+        mysql.connection.commit()
+        flash('Profile deleted successfully')
+        return redirect('/users')
+    cur.close()
 
 
 
