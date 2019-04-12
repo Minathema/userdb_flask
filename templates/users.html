@@ -2,24 +2,6 @@
 {% extends "messages.html" %}
 <br>
 {% block body %}
-  <table border = 2, cellpadding = 4>
-    <tr>
-      <td> ID </td>
-      <td> NAME </td>
-      <td> MOBILE NUMBER </td>
-      <td> EMAIL </td>
-      <td> HOME ADDRESS </td>
-    </tr>
-    {% for user in userDetails %}
-    <tr>
-      <!-- show all rows in database table -->
-      <td> {{user[0]}} </td>
-      <td> {{user[1]}} </td>
-      <td> {{user[2]}} </td>
-      <td> {{user[3]}} </td>
-      <td> {{user[4]}} </td>
-    </tr>
-    {% endfor %}
-  </table>
+  {{ table }}
 {% endblock %}
 </center>
