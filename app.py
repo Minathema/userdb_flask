@@ -2,8 +2,6 @@
 
 from flask import Flask, render_template, request, redirect, flash, url_for
 from flask_mysqldb import MySQL
-import pymysql
-from tables import Results
 import yaml
 import os
 
@@ -67,57 +65,59 @@ def add_user_profile():
     return render_template('add_user_profile.html') #render a template to display the form
 
 
+
 @app.route('/new_profile') #add route to new_profile page
 def new_profile(): #define new_profile page
     cur = mysql.connection.cursor()
-    sql = "SELECT * FROM users order by id desc limit 1;"
-    resultValue = cur.execute(sql) #returns latest entry
+    resultValue = cur.execute("SELECT * FROM users order by id desc limit 1;") #returns latest entry
     if resultValue > 0: #check if there are rows (=content) i.e. not empty table
         userDetails = cur.fetchall() #returns all rows (in this case the only one that we selected3)
     cur.close()
     return render_template('new_profile.html', userDetails=userDetails)
 
 
-@app.route('/users')
+@app.route('/users', methods=['POST'])
 def users(): #define new_profile page
-    cur = mysql.connection.cursor(pymysql.cursors.DictCursor)
+    cur = mysql.connection.cursor()
     resultValue = cur.execute("SELECT * FROM users;")
     if resultValue > 0: #check if there are rows (=content) i.e. not empty table
         userDetails = cur.fetchall() #returns all rows
-        table = Results(userDetails)
-        table.border = True
-    cur.close()
-    return render_template('users.html', userDetails=userDetails, table=table) #render a template to display all user details
-
-
-@app.route('/edit/<int:id>')
-def edit_view(id):
-    cur = mysql.connection.cursor(pymysql.cursors.DictCursor)
-    cur.execute("SELECT * FROM users where id = %s;", (id,))
-    userDetails = cur.fetchone()
-    if userDetails:
-        return render_template('edit.html', userDetails=userDetails)
-    cur.close()
-
-
-@app.route('/update', methods=['POST'])
-def update_user():
     if request.method == 'POST':
+        if request.form['edit_button']:
+            return redirect('/edit_profile')
+        elif request.form['delete_button']:
+            cur.execute("DELETE FROM users WHERE id = %s;", (id))
+            mysql.connection.commit()
+            flash('Profile deleted successfully')
+        elif request.form['add_button']:
+            return redirect('/add_user_profile')
+    cur.close()
+    return render_template('users.html', userDetails=userDetails) #render a template to display all user details
+
+
+@app.route('/edit_user_profile/<int:id>', methods=['GET', 'POST']) #add route to add_user_profile page / add methods
+def edit_user_profile(id):
+    if request.method == 'POST':
+        #Fetch form data
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM users WHERE id = %s;", (id))
+        userDetails = cur.fetchone()
         user_name = request.form['user_name']
         mobile_number = request.form['mobile_number']
         email = request.form['email']
         home_address = request.form['home_address']
-        cur = mysql.connection.cursor()
-        sql = "UPDATE users SET (user_name, mobile_number, email, home_address) VALUES (%s, %s, %s, %s) where id = %s;"
-        data = (user_name, mobile_number, email, home_address, id,)
+        sql = "REPLACE INTO users (user_name, mobile_number, email, home_address) VALUES (%s, %s, %s, %s) where id = %s;"
+        data = (user_name, mobile_number, email, home_address, id)
         cur.execute(sql, data) #insert new inputs to database
         mysql.connection.commit() #commit changes to database
-        flash('Profile updated successfully')
-        return redirect('/new_profile')
-    cur.close()
+        flash('Profile edited successfully')
+        return redirect('/users')
+        cur.close()
+    return render_template('edit_user_profile.html') #render a template to display the form
 
 
-@app.route('/delete/<int:id>')
+
+@app.route('/delete_user_profile/<int:id>')
 def delete_user(id):
     if request.method == 'POST':
         cur = mysql.connection.cursor()
