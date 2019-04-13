@@ -76,32 +76,33 @@ def new_profile(): #define new_profile page
     return render_template('new_profile.html', userDetails=userDetails)
 
 
-@app.route('/users', methods=['POST'])
+@app.route('/users')
 def users(): #define new_profile page
     cur = mysql.connection.cursor()
     resultValue = cur.execute("SELECT * FROM users;")
     if resultValue > 0: #check if there are rows (=content) i.e. not empty table
         userDetails = cur.fetchall() #returns all rows
-    if request.method == 'POST':
-        if request.form['edit_button']:
-            return redirect('/edit_profile')
+        '''if request.form['add_button']:
+            return redirect('/add_user_profile')
         elif request.form['delete_button']:
             cur.execute("DELETE FROM users WHERE id = %s;", (id))
             mysql.connection.commit()
             flash('Profile deleted successfully')
-        elif request.form['add_button']:
-            return redirect('/add_user_profile')
+        elif request.form['edit_button']:
+            return redirect('/edit_user_profile')'''
     cur.close()
     return render_template('users.html', userDetails=userDetails) #render a template to display all user details
 
 
-@app.route('/edit_user_profile/<int:id>', methods=['GET', 'POST']) #add route to add_user_profile page / add methods
+@app.route('/edit_user_profile/<int:id>', methods=['POST']) #add route to add_user_profile page / add methods
 def edit_user_profile(id):
+
+    #Fetch form data
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM users WHERE id = %s;", [id])
+    userDetails = cur.fetchone()
+
     if request.method == 'POST':
-        #Fetch form data
-        cur = mysql.connection.cursor()
-        cur.execute("SELECT * FROM users WHERE id = %s;", (id))
-        userDetails = cur.fetchone()
         user_name = request.form['user_name']
         mobile_number = request.form['mobile_number']
         email = request.form['email']
@@ -112,8 +113,8 @@ def edit_user_profile(id):
         mysql.connection.commit() #commit changes to database
         flash('Profile edited successfully')
         return redirect('/users')
-        cur.close()
-    return render_template('edit_user_profile.html') #render a template to display the form
+    cur.close()
+    return render_template('edit_user_profile.html', userDetails=userDetails) #render a template to display the form
 
 
 
@@ -121,7 +122,7 @@ def edit_user_profile(id):
 def delete_user(id):
     if request.method == 'POST':
         cur = mysql.connection.cursor()
-        cur.execute("DELETE FROM users where id = %s;", (id,))
+        cur.execute("DELETE FROM users where id = %s;", [id])
         mysql.connection.commit()
         flash('Profile deleted successfully')
         return redirect('/users')

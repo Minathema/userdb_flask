@@ -2,28 +2,34 @@
 {% extends "messages.html" %}
 <br>
 {% block body %}
-<input type="submit" name="add_button" value="+  Create New Profile">
-<br><br>
-  <table border = 2, cellpadding = 4>
-    <tr>
-      <td> ID </td>
-      <td> NAME </td>
-      <td> MOBILE NUMBER </td>
-      <td> EMAIL </td>
-      <td> HOME ADDRESS </td>
-    </tr>
-    {% for user in userDetails %}
-    <tr>
-      <!-- show all rows in database table -->
-      <td> {{user[0]}} </td>
-      <td> {{user[1]}} </td>
-      <td> {{user[2]}} </td>
-      <td> {{user[3]}} </td>
-      <td> {{user[4]}} </td>
-      <td> <input type="submit" name="edit_button" value="Edit"> </td>
-      <td> <input type="submit" name="delete_button" value="Delete"> </td>
-    </tr>
-    {% endfor %}
-  </table>
+<form action="/add_user_profile">
+  <input type="submit" name="add_button" value="+  Create New Profile">
+</form>
+  <br>
+    <table border = 2, cellpadding = 4>
+      <tr>
+        <td> ID </td>
+        <td> NAME </td>
+        <td> MOBILE NUMBER </td>
+        <td> EMAIL </td>
+        <td> HOME ADDRESS </td>
+      </tr>
+      {% for user in userDetails %}
+      <tr>
+        <!-- show all rows in database table -->
+        <td> {{user[0]}} </td>
+        <td> {{user[1]}} </td>
+        <td> {{user[2]}} </td>
+        <td> {{user[3]}} </td>
+        <td> {{user[4]}} </td>
+        <form action="{{ url_for('edit_user_profile', id=user[0]) }}" method="post">
+          <td> <input type="submit" name="edit_button" value="Edit"> </td>
+        </form>
+        <form action="{{ url_for('delete_user_profile', id=user[0] }}"
+          <td> <input type="submit" name="delete_button" value="Delete"> </td>
+        </form>
+      </tr>
+      {% endfor %}
+    </table>
 {% endblock %}
 </center>

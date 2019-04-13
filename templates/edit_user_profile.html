@@ -1,20 +1,20 @@
 <center>
 {% block body %}
 <h3>Edit User Profile</h3>
-  <form method="POST" action="">
+  <form method="POST" action="/edit_user_profile">
     Name:<br>
-    <input type="text" name="user_name" value="{{ userDetails['user_name'] }}" autocomplete="off" required/>
+    <input type="text" name="user_name" value="{{ userDetails[1] }}" autocomplete="off" required/>
     <br><br>
     Mobile Number:<br>
-    <input type="text" name="mobile_number" value="{{ userDetails['mobile_number'] }}" autocomplete="off" required/>
+    <input type="text" name="mobile_number" value="{{ userDetails[2] }}" autocomplete="off" required/>
     <br><br>
     Email:<br>
-    <input type="email" name="email" value="{{ userDetails['email'] }}" autocomplete="off"/>
+    <input type="email" name="email" value="{{ userDetails[3] }}" autocomplete="off"/>
     <br><br>
     Home Address:<br>
-    <input type="text" name="home_address" value="{{ userDetails['home_address'] }}" autocomplete="off"/>
+    <input type="text" name="home_address" value="{{ userDetails[4] }}" autocomplete="off"/>
     <br><br>
-    <input name="id" value="{{ userDetails['id'] }}" type="hidden">
+    <input name="id" value="{{ userDetails[0] }}" type="hidden">
     <input type="submit" value="Submit">
   </form>
 {% endblock %}
