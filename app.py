@@ -82,25 +82,19 @@ def users(): #define new_profile page
     resultValue = cur.execute("SELECT * FROM users;")
     if resultValue > 0: #check if there are rows (=content) i.e. not empty table
         userDetails = cur.fetchall() #returns all rows
-        '''if request.form['add_button']:
-            return redirect('/add_user_profile')
-        elif request.form['delete_button']:
-            cur.execute("DELETE FROM users WHERE id = %s;", (id))
-            mysql.connection.commit()
-            flash('Profile deleted successfully')
-        elif request.form['edit_button']:
-            return redirect('/edit_user_profile')'''
+
     cur.close()
     return render_template('users.html', userDetails=userDetails) #render a template to display all user details
 
 
-@app.route('/edit_user_profile/<int:id>', methods=['POST']) #add route to add_user_profile page / add methods
+@app.route('/edit_user_profile/<int:id>', methods=['GET', 'POST']) #add route to add_user_profile page / add methods
 def edit_user_profile(id):
 
     #Fetch form data
     cur = mysql.connection.cursor()
     cur.execute("SELECT * FROM users WHERE id = %s;", [id])
     userDetails = cur.fetchone()
+    id = userDetails[0]
 
     if request.method == 'POST':
         user_name = request.form['user_name']
@@ -110,23 +104,12 @@ def edit_user_profile(id):
         sql = "REPLACE INTO users (user_name, mobile_number, email, home_address) VALUES (%s, %s, %s, %s) where id = %s;"
         data = (user_name, mobile_number, email, home_address, id)
         cur.execute(sql, data) #insert new inputs to database
+
         mysql.connection.commit() #commit changes to database
         flash('Profile edited successfully')
         return redirect('/users')
     cur.close()
     return render_template('edit_user_profile.html', userDetails=userDetails) #render a template to display the form
-
-
-
-@app.route('/delete_user_profile/<int:id>')
-def delete_user(id):
-    if request.method == 'POST':
-        cur = mysql.connection.cursor()
-        cur.execute("DELETE FROM users where id = %s;", [id])
-        mysql.connection.commit()
-        flash('Profile deleted successfully')
-        return redirect('/users')
-    cur.close()
 
 
 
