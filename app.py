@@ -57,7 +57,7 @@ def add_user_profile():
         print((user_name))
         cur = mysql.connection.cursor()
         sql = "INSERT INTO users (user_name, mobile_number, email, home_address) VALUES (%s, %s, %s, %s);"
-        data = (user_name, mobile_number, email, home_address,)
+        data = (user_name, mobile_number, email, home_address)
         cur.execute(sql, data) #insert new inputs to database
         mysql.connection.commit() #commit changes to database
         cur.close()
@@ -93,17 +93,22 @@ def edit_user_profile(id):
     #Fetch form data
     cur = mysql.connection.cursor()
     cur.execute("SELECT * FROM users WHERE id = %s;", [id])
+    print('line 96:', id)
     userDetails = cur.fetchone()
-    id = userDetails[0]
+    print('userDetails:', userDetails)
+
 
     if request.method == 'POST':
         user_name = request.form['user_name']
         mobile_number = request.form['mobile_number']
         email = request.form['email']
         home_address = request.form['home_address']
-        sql = "REPLACE INTO users (user_name, mobile_number, email, home_address) VALUES (%s, %s, %s, %s) where id = %s;"
-        data = (user_name, mobile_number, email, home_address, id)
-        cur.execute(sql, data) #insert new inputs to database
+        print('NNNNNNNNNNN', user_name, mobile_number, email, home_address, id)
+
+        print('line 108:', id)
+        print('line 109:', user_name)
+
+        cur.execute("REPLACE INTO users SET user_name = 'Tsouki', mobile_number = '333', email = 'test@gmail.com', home_address = 'Cat House';")
 
         mysql.connection.commit() #commit changes to database
         flash('Profile edited successfully')
