@@ -93,22 +93,17 @@ def edit_user_profile(id):
     #Fetch form data
     cur = mysql.connection.cursor()
     cur.execute("SELECT * FROM users WHERE id = %s;", [id])
-    print('line 96:', id)
     userDetails = cur.fetchone()
-    print('userDetails:', userDetails)
-
 
     if request.method == 'POST':
         user_name = request.form['user_name']
         mobile_number = request.form['mobile_number']
         email = request.form['email']
         home_address = request.form['home_address']
-        print('NNNNNNNNNNN', user_name, mobile_number, email, home_address, id)
 
-        print('line 108:', id)
-        print('line 109:', user_name)
-
-        cur.execute("REPLACE INTO users SET user_name = 'Tsouki', mobile_number = '333', email = 'test@gmail.com', home_address = 'Cat House';")
+        sql = "REPLACE INTO users SET id = %s, user_name = %s, mobile_number = %s, email = %s, home_address =%s;"
+        data = (id, user_name, mobile_number, email, home_address)
+        cur.execute(sql, data)
 
         mysql.connection.commit() #commit changes to database
         flash('Profile edited successfully')
