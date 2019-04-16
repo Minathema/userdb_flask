@@ -22,7 +22,7 @@
         <td> {{user[2]}} </td>
         <td> {{user[3]}} </td>
         <td> {{user[4]}} </td>
-        <form action="{{ url_for('edit_user_profile', id=user[0]) }}" method="post">
+        <form action="/edit_user_profile/{{user[0]}}">
           <td> <input type="submit" name="edit_button" value="Edit"> </td>
         </form>
       </tr>

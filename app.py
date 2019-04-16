@@ -26,8 +26,6 @@ def login():
     if request.method == 'POST':
         form_username = request.form['username']
         form_password = request.form['password']
-        print((form_username))
-        print([form_username])
         cur = mysql.connection.cursor()
         row = cur.execute("SELECT * FROM admin WHERE username = %s;", [form_username])
         if row > 0:
@@ -76,7 +74,7 @@ def new_profile(): #define new_profile page
     return render_template('new_profile.html', userDetails=userDetails)
 
 
-@app.route('/users')
+@app.route('/users', methods=['GET'])
 def users(): #define new_profile page
     cur = mysql.connection.cursor()
     resultValue = cur.execute("SELECT * FROM users;")
@@ -91,9 +89,12 @@ def users(): #define new_profile page
 def edit_user_profile(id):
 
     #Fetch form data
+    print(id)
     cur = mysql.connection.cursor()
     cur.execute("SELECT * FROM users WHERE id = %s;", [id])
     userDetails = cur.fetchone()
+    print('NNNNNNNNN',userDetails)
+    print('XXXXXXXXXXX', data(request.form))
 
     if request.method == 'POST':
         user_name = request.form['user_name']
@@ -101,7 +102,8 @@ def edit_user_profile(id):
         email = request.form['email']
         home_address = request.form['home_address']
 
-        sql = "REPLACE INTO users SET id = %s, user_name = %s, mobile_number = %s, email = %s, home_address =%s;"
+
+        sql = "REPLACE INTO users SET id = %s, user_name = %s, mobile_number = %s, email = %s, home_address = %s;"
         data = (id, user_name, mobile_number, email, home_address)
         cur.execute(sql, data)
 
