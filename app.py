@@ -52,7 +52,6 @@ def add_user_profile():
         mobile_number = request.form['mobile_number']
         email = request.form['email']
         home_address = request.form['home_address']
-        print((user_name))
         cur = mysql.connection.cursor()
         sql = "INSERT INTO users (user_name, mobile_number, email, home_address) VALUES (%s, %s, %s, %s);"
         data = (user_name, mobile_number, email, home_address)
@@ -89,12 +88,9 @@ def users(): #define new_profile page
 def edit_user_profile(id):
 
     #Fetch form data
-    print(id)
     cur = mysql.connection.cursor()
     cur.execute("SELECT * FROM users WHERE id = %s;", [id])
     userDetails = cur.fetchone()
-    print('NNNNNNNNN',userDetails)
-    print('XXXXXXXXXXX', data(request.form))
 
     if request.method == 'POST':
         user_name = request.form['user_name']
