@@ -48,13 +48,50 @@ def login():
 
 @app.route('/add_user_profile', methods=['GET', 'POST']) #add route to add_user_profile page / add methods
 def add_user_profile():
+    condition = False
     if request.method == 'POST':
+        while condition == False :
         #Fetch form data
-        user_name = request.form['user_name']
-        telephone = request.form['telephone']
-        mobile_number = request.form['mobile_number']
-        email = request.form['email']
-        home_address = request.form['home_address']
+            user_name = request.form['user_name']
+            telephone = (request.form['telephone']).replace(" ", "") #remove spaces from telephone string
+            mobile_number = (request.form['mobile_number']).replace(" ", "") #remove spaces from mobile_number string
+            email = ((request.form['email']).replace(" ", "")).lower() #remove spaces from email string and make lowercase
+            home_address = request.form['home_address']
+            print('NNNNNNNNNNNNN: line60', user_name, telephone, mobile_number, email, home_address)
+
+            if not user_name or user_name.isalpha() == False:
+                flash('Please add a valid name')
+                print('NNNNNNNNNNNNN: line64', user_name)
+                return redirect('/add_user_profile')
+
+            elif not telephone and not mobile_number:
+                flash('Please add at least one contact number')
+                print('NNNNNNNNNNNNN: line68', mobile_number)
+                return redirect('/add_user_profile')
+
+            elif telephone.isdigit() == False or len(telephone) != 10 or telephone.charAt(0) != '2' or telephone.charAt(1) != '1':
+                flash('Please add a valid telephone number')
+                print('NNNNNNNNNNNNN: line73', telephone)
+                return redirect('/add_user_profile')
+
+            elif mobile_number.isdigit() == False or len(mobile_number) != 10 or mobile_number.charAt(0) != '6' or mobile_number.charAt(1) != '9':
+                flash('Please add a valid mobile number')
+                print('NNNNNNNNNNNNN: line78', mobile_number)
+                return redirect('/add_user_profile')
+
+            elif bool(re.match('^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$', email)) == None:
+                flash('Please add a valid email')
+                print('NNNNNNNNNNNNN: line83', email)
+                return redirect('/add_user_profile')
+
+            elif home_address.isdigit() == True:
+                flash('Please add a valid home address')
+                print('NNNNNNNNNNNNN: line88', home_address)
+                return redirect('/add_user_profile')
+
+            else:
+                condition = True
+
 
         cur = mysql.connection.cursor()
         sql = "INSERT INTO users (user_name, telephone, mobile_number, email, home_address) VALUES (%s, %s, %s, %s, %s);"

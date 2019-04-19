@@ -1,21 +1,22 @@
 <center>
+{% extends "messages.html" %}
 {% block body %}
 <h3>Create new user profile</h3>
   <form method="POST" action="">
     Name:<span style="color:red;">*</span><br>
-    <input type="text" name="user_name" required/>
+    <input type="text" name="user_name" placeholder="Jane Doe"/>
     <br><br>
     Telephone:<span style="color:red">*</span><br>
-    <input type="text" name="telephone" required/>
+    <input type="text" name="telephone" placeholder="21XXXXXXXX"/>
     <br><br>
     Mobile Number:<span style="color:red">*</span><br>
-    <input type="text" name="mobile_number" required/>
+    <input type="text" name="mobile_number" placeholder="69XXXXXXXX"/>
     <br><br>
     Email:<br>
-    <input type="email" name="email"/>
+    <input type="email" name="email" placeholder="contact@example.com"/>
     <br><br>
     Home Address:<br>
-    <input type="text" name="home_address"/>
+    <input type="text" name="home_address" placeholder=" Sample Address"/>
     <br><br>
     <p style="color:red; font-size:80%;">* Required Fields</p>
     <input type="submit" value="Submit">
