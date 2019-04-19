@@ -26,11 +26,13 @@ def login():
     if request.method == 'POST':
         form_username = request.form['username']
         form_password = request.form['password']
+
         cur = mysql.connection.cursor()
         row = cur.execute("SELECT * FROM admin WHERE username = %s;", [form_username])
         if row > 0:
             cur.execute("SELECT password FROM admin WHERE username = %s;", [form_username])
             admin_password = cur.fetchone()
+
             if admin_password[0] == form_password:
                 flash('You were successfully logged in')
                 return redirect('/users')
@@ -52,10 +54,12 @@ def add_user_profile():
         mobile_number = request.form['mobile_number']
         email = request.form['email']
         home_address = request.form['home_address']
+
         cur = mysql.connection.cursor()
         sql = "INSERT INTO users (user_name, mobile_number, email, home_address) VALUES (%s, %s, %s, %s);"
         data = (user_name, mobile_number, email, home_address)
         cur.execute(sql, data) #insert new inputs to database
+
         mysql.connection.commit() #commit changes to database
         cur.close()
         return redirect('/new_profile') #redirect to new_profile page
@@ -108,6 +112,17 @@ def edit_user_profile(id):
         return redirect('/users')
     cur.close()
     return render_template('edit_user_profile.html', userDetails=userDetails) #render a template to display the form
+
+
+@app.route('/delete_user_profile/<int:id>', methods=['POST'])
+def delete_user_profile(id):
+    if request.method == 'POST':
+        cur = mysql.connection.cursor()
+        cur.execute("DELETE FROM users WHERE id =%s;", [id])
+        mysql.connection.commit()
+        flash('Profile deleted successfully')
+        return redirect('/users')
+        cur.close()
 
 
 

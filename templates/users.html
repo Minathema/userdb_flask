@@ -25,6 +25,9 @@
         <form action="/edit_user_profile/{{user[0]}}">
           <td> <input type="submit" name="edit_button" value="Edit"> </td>
         </form>
+        <form action="/delete_user_profile/{{user[0]}}" method="POST">
+          <td> <input type="submit" name="edit_button" value="Delete"> </td>
+        </form>
       </tr>
       {% endfor %}
     </table>
