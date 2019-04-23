@@ -58,46 +58,39 @@ def add_user_profile():
             mobile_number = (request.form['mobile_number']).replace(" ", "") #remove spaces from 'mobile_number'
             email = ((request.form['email']).replace(" ", "")).lower() #remove spaces from 'email' and make lowercase
             home_address = request.form['home_address']
-            print('NNNNNNNNNNNNN: line60', user_name, telephone[:2], mobile_number, email, home_address)
 
             #check if 'user_name' is empty or contains numbers (regex)
             if not user_name or bool(re.search(r'\d', user_name)) == True:
                 flash('Please add a valid name')
-                print('NNNNNNNNNNNNN: line64')
                 return redirect('/add_user_profile')
 
             #check if both 'telephone' and 'mobile_number' are empty
             elif not telephone and not mobile_number:
                 flash('Please add at least one contact number')
-                print('NNNNNNNNNNNNN: line68', mobile_number)
                 return redirect('/add_user_profile')
 
             #check if 'telephone' is not empty
             elif telephone == True:
-                #check if 'telephone' contains not only numbers or does not consist of 10 characters or does not start with '21'
+                #check if 'telephone' consists of not only numbers or is not 10 characters long or does not start with '21'
                 if telephone.isdigit() == False or len(telephone) != 10 or telephone[:2] != '21':
                     flash('Please add a valid telephone number')
-                    print('NNNNNNNNNNNNN: line73', telephone)
                     return redirect('/add_user_profile')
 
             #check if 'mobile_number' is not empty
             elif mobile_number == True:
-                #check if 'telephone' contains not only numbers or does not consist of 10 characters or does not start with '69'
+                #check if 'telephone' consists of not only numbers or is not 10 characters long or does not start with '69'
                 if mobile_number.isdigit() == False or len(mobile_number) != 10 or mobile_number[:2] != '69':
                     flash('Please add a valid mobile number')
-                    print('NNNNNNNNNNNNN: line78', mobile_number)
                     return redirect('/add_user_profile')
 
             #check if 'email' is valid (regex)
             elif bool(re.match('^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$', email)) == None:
                 flash('Please add a valid email')
-                print('NNNNNNNNNNNNN: line83', email)
                 return redirect('/add_user_profile')
 
-            #check if 'home_address' consists of numbers only
+            #check if 'home_address' consists of only numbers
             elif home_address.isdigit() == True:
                 flash('Please add a valid home address')
-                print('NNNNNNNNNNNNN: line88', home_address)
                 return redirect('/add_user_profile')
 
             #stops loop if all inputs are valid
@@ -128,7 +121,7 @@ def new_profile(): #define new_profile page
 
 
 @app.route('/users', methods=['GET'])
-def users(): #define new_profile page
+def users():
     cur = mysql.connection.cursor()
     resultValue = cur.execute("SELECT * FROM users;")
     if resultValue > 0: #check if there are rows (=content) i.e. not empty table
